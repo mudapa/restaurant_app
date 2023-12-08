@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/shared/helper.dart';
 
+import '../../../shared/helper.dart';
 import '../../../shared/style.dart';
 
 class SettingPage extends StatefulWidget {
