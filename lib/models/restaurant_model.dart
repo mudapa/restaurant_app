@@ -117,6 +117,10 @@ List<RestaurantModel> parseRestaurant(String? json) {
     return [];
   }
 
-  final List parsed = jsonDecode(json);
-  return parsed.map((e) => RestaurantModel.fromJson(e)).toList();
+  final Map<String, dynamic> map = jsonDecode(json);
+  final List<dynamic> restaurants = map['restaurants'];
+
+  return restaurants.map((restaurant) {
+    return RestaurantModel.fromJson(restaurant);
+  }).toList();
 }
