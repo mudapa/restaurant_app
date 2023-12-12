@@ -32,7 +32,7 @@ class _SplashPageState extends State<SplashPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Lottie.asset(
-              'assets/lottie_loading.json',
+              'assets/lottie_logo.json',
               width: 200,
               height: 200,
               fit: BoxFit.fill,
