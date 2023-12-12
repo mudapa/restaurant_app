@@ -8,9 +8,9 @@ import '../../widgets/item.dart';
 class DetailPage extends StatefulWidget {
   final RestaurantModel restaurant;
   const DetailPage({
-    Key? key,
+    super.key,
     required this.restaurant,
-  }) : super(key: key);
+  });
 
   @override
   State<DetailPage> createState() => _DetailPageState();

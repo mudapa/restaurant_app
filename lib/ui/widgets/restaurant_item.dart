@@ -7,9 +7,9 @@ import '../pages/main/detail_page.dart';
 class RestaurantItem extends StatelessWidget {
   final RestaurantModel restaurant;
   const RestaurantItem({
-    Key? key,
+    super.key,
     required this.restaurant,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

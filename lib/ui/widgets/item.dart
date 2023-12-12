@@ -5,9 +5,9 @@ import '../../shared/style.dart';
 class Item extends StatelessWidget {
   final List<dynamic> itemCount;
   const Item({
-    Key? key,
+    super.key,
     required this.itemCount,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
