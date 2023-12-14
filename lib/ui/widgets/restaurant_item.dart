@@ -26,7 +26,7 @@ class RestaurantItem extends StatelessWidget {
         );
       },
       child: Container(
-        width: MediaQuery.of(context).size.width / 2 - 32,
+        width: MediaQuery.of(context).size.width / 2 - 24,
         height: 280,
         decoration: BoxDecoration(
           color: whiteColor,
@@ -78,7 +78,6 @@ class RestaurantItem extends StatelessWidget {
                     height: 8,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
@@ -98,6 +97,7 @@ class RestaurantItem extends StatelessWidget {
                           ),
                         ],
                       ),
+                      const Spacer(),
                       Row(
                         children: [
                           Icon(
