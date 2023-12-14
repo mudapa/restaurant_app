@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
+import 'package:readmore/readmore.dart';
 
+import '../../../cubit/detail/detail_restaurant_cubit.dart';
 import '../../../models/restaurant_model.dart';
+import '../../../shared/api_path.dart';
+import '../../../shared/helper.dart';
 import '../../../shared/style.dart';
+import '../../widgets/card_customer_review.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/custom_form_review.dart';
 import '../../widgets/item.dart';
 
 class DetailPage extends StatefulWidget {
-  final RestaurantModel restaurant;
+  final Restaurant restaurant;
   const DetailPage({
     super.key,
     required this.restaurant,
@@ -20,10 +28,25 @@ class _DetailPageState extends State<DetailPage> {
   bool isFavorite = false;
 
   @override
+  void initState() {
+    context.read<DetailRestaurantCubit>().getDetailRestaurant(
+          widget.restaurant.id!,
+        );
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: _buildBody(context),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          context.read<DetailRestaurantCubit>().getDetailRestaurant(
+                widget.restaurant.id!,
+              );
+        },
+        child: SafeArea(
+          child: _buildBody(context),
+        ),
       ),
     );
   }
@@ -56,16 +79,16 @@ class _DetailPageState extends State<DetailPage> {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.pop(context, isFavorite);
+              Navigator.pop(context);
             },
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: lightGreyColor.withOpacity(0.5),
+                color: lightGreyColor.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.chevron_left,
+                Icons.chevron_left_rounded,
                 color: whiteColor,
               ),
             ),
@@ -76,19 +99,30 @@ class _DetailPageState extends State<DetailPage> {
             style: whiteTextStyle.copyWith(
               fontSize: 16,
               fontWeight: semiBold,
+              shadows: [
+                Shadow(
+                  color: greyColor.withOpacity(0.5),
+                  offset: const Offset(2, 2),
+                ),
+              ],
             ),
+            overflow: TextOverflow.ellipsis,
           ),
           const Spacer(),
           GestureDetector(
             onTap: () {
               setState(() {
                 isFavorite = !isFavorite;
+                toast(
+                  'Feature Coming Soon!',
+                  orangeColor,
+                );
               });
             },
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: lightGreyColor.withOpacity(0.5),
+                color: lightGreyColor.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -108,7 +142,7 @@ class _DetailPageState extends State<DetailPage> {
       child: Stack(
         children: [
           Image.network(
-            widget.restaurant.pictureId!,
+            '${ApiPath.imageLargeUrl}${widget.restaurant.pictureId!}',
             width: MediaQuery.of(context).size.width,
             height: 270,
             fit: BoxFit.cover,
@@ -126,119 +160,236 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _buildContent(BuildContext context) {
-    return Expanded(
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.restaurant.name!,
-                  style: blackTextStyle.copyWith(
-                    fontSize: 24,
-                    fontWeight: semiBold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          color: redColor,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          widget.restaurant.city!,
-                          style: blackTextStyle.copyWith(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: orangeColor,
-                        ),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          widget.restaurant.rating.toString(),
-                          style: blackTextStyle.copyWith(
-                            fontSize: 16,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Divider(),
-                const SizedBox(height: 8),
-                Text(
-                  'Description',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: semiBold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  widget.restaurant.description!,
-                  style: blackTextStyle.copyWith(
-                    fontSize: 16,
-                  ),
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 16),
-                const Divider(),
-                const SizedBox(height: 8),
-                Text(
-                  'Foods',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: semiBold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Item(
-                  itemCount: widget.restaurant.menus!.foods!,
-                ),
-                Text(
-                  'Drinks',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: semiBold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Item(
-                  itemCount: widget.restaurant.menus!.drinks!,
-                ),
-                const SizedBox(height: 16),
-                CustomButton(
-                  text: 'Book Now',
-                  color: blueColor,
-                ),
-              ],
+    return BlocBuilder<DetailRestaurantCubit, DetailRestaurantState>(
+      builder: (context, state) {
+        if (state is DetailRestaurantFailed) {
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<DetailRestaurantCubit>().getDetailRestaurant(
+                    widget.restaurant.id!,
+                  );
+            },
+            child: Center(
+              child: Lottie.asset(
+                'assets/lottie_no_internet.json',
+                fit: BoxFit.cover,
+                repeat: true,
+              ),
             ),
-          ),
-        ),
-      ),
+          );
+        }
+
+        if (state is DetailRestaurantLoading) {
+          return Center(
+            child: Lottie.asset(
+              'assets/lottie_find.json',
+              fit: BoxFit.cover,
+              repeat: true,
+            ),
+          );
+        }
+
+        if (state is DetailRestaurantSuccess) {
+          return Expanded(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        state.detailRestaurant.restaurant!.name!,
+                        style: blackTextStyle.copyWith(
+                          fontSize: 24,
+                          fontWeight: semiBold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                color: redColor,
+                              ),
+                              const SizedBox(width: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    state.detailRestaurant.restaurant!.city!,
+                                    style: blackTextStyle.copyWith(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Text(
+                                    state.detailRestaurant.restaurant!.address!,
+                                    style: blackTextStyle,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.star,
+                                color: orangeColor,
+                              ),
+                              const SizedBox(
+                                width: 4,
+                              ),
+                              Text(
+                                widget.restaurant.rating.toString(),
+                                style: blackTextStyle.copyWith(
+                                  fontSize: 16,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Description',
+                        style: blackTextStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ReadMoreText(
+                        state.detailRestaurant.restaurant!.description!,
+                        trimLines: 4,
+                        colorClickableText: blueColor,
+                        trimMode: TrimMode.Length,
+                        trimCollapsedText: 'Show more',
+                        trimExpandedText: ' Show less',
+                        style: blackTextStyle.copyWith(
+                          fontSize: 16,
+                        ),
+                        moreStyle: TextStyle(
+                          fontSize: 14,
+                          fontWeight: semiBold,
+                          color: blueColor,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Categories',
+                        style: blackTextStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Item(
+                        itemCount:
+                            state.detailRestaurant.restaurant!.categories!,
+                      ),
+                      Text(
+                        'Foods',
+                        style: blackTextStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Item(
+                        itemCount:
+                            state.detailRestaurant.restaurant!.menus!.foods!,
+                      ),
+                      Text(
+                        'Drinks',
+                        style: blackTextStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Item(
+                        itemCount:
+                            state.detailRestaurant.restaurant!.menus!.drinks!,
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Reviews',
+                        style: blackTextStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 150,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: state
+                              .detailRestaurant.restaurant!.customerReviews!
+                              .map((review) {
+                            return CardCustomerReview(
+                              review: review,
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          CustomButton(
+                            onPressed: () {
+                              toast(
+                                'Feature Coming Soon!',
+                                orangeColor,
+                              );
+                            },
+                            text: 'Book Now',
+                            color: blueColor,
+                          ),
+                          CustomButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) => CustomFormReview(
+                                  detailRestaurant:
+                                      state.detailRestaurant.restaurant!,
+                                ),
+                              );
+                            },
+                            text: 'Review Restaurant',
+                            color: orangeColor,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+
+        return Container();
+      },
     );
   }
 }

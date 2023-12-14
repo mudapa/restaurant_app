@@ -1,7 +1,12 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 
+import '../../../cubit/restaurant/restaurant_cubit.dart';
 import '../../../models/restaurant_model.dart';
 import '../../../shared/style.dart';
+import '../../widgets/carousel_image.dart';
 import '../../widgets/restaurant_item.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,193 +17,191 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final searchController = TextEditingController();
-  late List<RestaurantModel> filteredRestaurants = [];
-  late List<RestaurantModel> allRestaurants = [];
-
-  bool changeColor = false;
-
   @override
   void initState() {
+    context.read<RestaurantCubit>().getListRestaurants();
     super.initState();
-    _initializeData();
-    searchController.addListener(_updateFilteredRestaurants);
-  }
-
-  Future<void> _initializeData() async {
-    final data = await fetchRestaurantData();
-    setState(() {
-      allRestaurants = parseRestaurant(data);
-      filteredRestaurants = allRestaurants;
-    });
-  }
-
-  Future<String> fetchRestaurantData() async {
-    return DefaultAssetBundle.of(context)
-        .loadString('assets/local_restaurant.json');
-  }
-
-  void _updateFilteredRestaurants() {
-    final query = searchController.text.toLowerCase();
-    setState(() {
-      filteredRestaurants = allRestaurants
-          .where((r) => r.name!.toLowerCase().contains(query))
-          .toList();
-
-      if (query.isNotEmpty) {
-        changeColor = true;
-      } else {
-        changeColor = false;
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    searchController.removeListener(_updateFilteredRestaurants);
-    searchController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          _buildAppBar(),
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.only(bottom: 50),
-              itemCount: filteredRestaurants.isNotEmpty
-                  ? filteredRestaurants.length
-                  : allRestaurants.length,
-              itemBuilder: (context, index) {
-                if (filteredRestaurants.isEmpty &&
-                    searchController.text.isNotEmpty) {
-                  return Container();
-                }
-                return _buildItem(
-                  context,
-                  filteredRestaurants.isNotEmpty
-                      ? filteredRestaurants[index]
-                      : allRestaurants[index],
-                );
-              },
-            ),
-          ),
-        ],
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<RestaurantCubit>().getListRestaurants();
+      },
+      child: SafeArea(
+        child: BlocBuilder<RestaurantCubit, RestaurantState>(
+          builder: (context, state) {
+            if (state is RestaurantFailed) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<RestaurantCubit>().getListRestaurants();
+                },
+                child: Center(
+                  child: Lottie.asset(
+                    'assets/lottie_no_internet.json',
+                    fit: BoxFit.cover,
+                    repeat: true,
+                  ),
+                ),
+              );
+            }
+
+            if (state is RestaurantLoading) {
+              return Center(
+                child: Lottie.asset(
+                  'assets/lottie_find.json',
+                  fit: BoxFit.cover,
+                  repeat: true,
+                ),
+              );
+            }
+
+            if (state is RestaurantSuccess) {
+              return ListView(
+                padding: const EdgeInsets.only(
+                  bottom: 16,
+                ),
+                children: [
+                  _buildHeader(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Favorite Restaurant',
+                          style: blackTextStyle.copyWith(
+                            fontSize: 24,
+                            fontWeight: semiBold,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.favorite,
+                          color: redColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildCarouselImage(state.restaurants.restaurants!),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Explore Restaurant',
+                          style: blackTextStyle.copyWith(
+                            fontSize: 24,
+                            fontWeight: semiBold,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(
+                          Icons.search_rounded,
+                          size: 32,
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildContent(state.restaurants.restaurants!),
+                ],
+              );
+            }
+
+            return Container();
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildItem(
-    BuildContext context,
-    RestaurantModel restaurant,
-  ) {
-    return Wrap(
-      children: [
-        RestaurantItem(restaurant: restaurant),
-      ],
-    );
-  }
-
-  Widget _buildAppBar() {
+  Widget _buildHeader() {
     return Container(
-      height: 100,
+      margin: const EdgeInsets.only(
+        bottom: 16,
+      ),
       padding: const EdgeInsets.symmetric(
-        horizontal: 16,
+        horizontal: 24,
         vertical: 16,
       ),
-      decoration: BoxDecoration(
-        color: whiteColor,
-        boxShadow: [
-          BoxShadow(
-            color: greyColor.withOpacity(0.5),
-            spreadRadius: 1,
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildAppBarText(),
-          _buildSearchTextField(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAppBarText() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Restaurant App',
-          style: blackTextStyle.copyWith(
-            fontSize: 20,
-            fontWeight: semiBold,
-            shadows: [
-              Shadow(
-                color: greyColor.withOpacity(0.5),
-                offset: const Offset(2, 2),
+          Row(
+            children: [
+              Text(
+                'Restaurant App',
+                style: blackTextStyle.copyWith(
+                  fontSize: 32,
+                  fontWeight: semiBold,
+                  shadows: [
+                    Shadow(
+                      color: greyColor.withOpacity(0.5),
+                      offset: const Offset(3, 3),
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.restaurant_menu_rounded,
+                color: orangeColor,
+                size: 32,
+              )
             ],
           ),
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(
-          height: 2,
-        ),
-        Text(
-          'Find your favorite restaurant',
-          style: greyTextStyle.copyWith(
-            fontSize: 12,
-            fontWeight: medium,
-          ),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSearchTextField() {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.4,
-      height: 40,
-      decoration: BoxDecoration(
-        color: changeColor == false ? lightGreyColor : whiteColor,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: greyColor,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: greyColor.withOpacity(0.5),
-            offset: const Offset(5, 5),
+          Text(
+            'Find your favorite restaurant',
+            style: greyTextStyle,
           ),
         ],
       ),
-      child: _buildTextField(),
     );
   }
 
-  Widget _buildTextField() {
-    return TextFormField(
-      controller: searchController,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        prefixIcon: Icon(
-          Icons.search,
-          color: greyColor,
-        ),
-        hintText: 'Search',
-        hintStyle: greyTextStyle.copyWith(
-          fontSize: 14,
-          fontWeight: regular,
+  Widget _buildCarouselImage(
+    List<Restaurant> restaurants,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        children: [
+          CarouselSlider(
+            options: CarouselOptions(
+              autoPlay: true,
+              enlargeCenterPage: true,
+              aspectRatio: 2.0,
+            ),
+            items: restaurants.map((restaurant) {
+              return CarouselImage(restaurant: restaurant);
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent(
+    List<Restaurant> restaurants,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(
+        top: 18,
+        bottom: 32,
+      ),
+      child: Center(
+        child: Wrap(
+          spacing: 20,
+          runSpacing: 24,
+          children: restaurants.map((restaurant) {
+            return RestaurantItem(
+              restaurant: restaurant,
+            );
+          }).toList(),
         ),
       ),
     );
