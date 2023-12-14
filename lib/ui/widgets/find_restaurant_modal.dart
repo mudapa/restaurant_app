@@ -58,7 +58,6 @@ class _FindRestaurantModalState extends State<FindRestaurantModal> {
                     if (state is FindRestaurantFailed) {
                       return Center(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Lottie.asset(
                               'assets/lottie_no_internet.json',
