@@ -394,7 +394,7 @@ class _DetailPageState extends State<DetailPage> {
                                 ),
                               );
                             },
-                            text: 'Review Restaurant',
+                            text: 'Review',
                             color: orangeColor,
                           ),
                         ],
