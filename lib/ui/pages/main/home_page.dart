@@ -1,3 +1,4 @@
+import 'package:animated_button/animated_button.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,25 +26,37 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        context.read<RestaurantCubit>().getListRestaurants();
-      },
-      child: SafeArea(
+    return SafeArea(
+      child: RefreshIndicator(
+        onRefresh: () async {
+          context.read<RestaurantCubit>().getListRestaurants();
+        },
         child: BlocBuilder<RestaurantCubit, RestaurantState>(
           builder: (context, state) {
             if (state is RestaurantFailed) {
-              return RefreshIndicator(
-                onRefresh: () async {
-                  context.read<RestaurantCubit>().getListRestaurants();
-                },
-                child: Center(
-                  child: Lottie.asset(
-                    'assets/lottie_no_internet.json',
-                    fit: BoxFit.cover,
-                    repeat: true,
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Lottie.asset(
+                      'assets/lottie_no_internet.json',
+                      fit: BoxFit.cover,
+                      repeat: true,
+                    ),
                   ),
-                ),
+                  AnimatedButton(
+                    onPressed: () {
+                      context.read<RestaurantCubit>().getListRestaurants();
+                    },
+                    color: blueColor,
+                    width: 200,
+                    height: 50,
+                    child: Text(
+                      'Refresh',
+                      style: whiteTextStyle,
+                    ),
+                  ),
+                ],
               );
             }
 

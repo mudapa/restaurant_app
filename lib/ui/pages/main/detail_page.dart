@@ -1,3 +1,4 @@
+import 'package:animated_button/animated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
@@ -170,10 +171,28 @@ class _DetailPageState extends State<DetailPage> {
                   );
             },
             child: Center(
-              child: Lottie.asset(
-                'assets/lottie_no_internet.json',
-                fit: BoxFit.cover,
-                repeat: true,
+              child: Column(
+                children: [
+                  Lottie.asset(
+                    'assets/lottie_no_internet.json',
+                    fit: BoxFit.cover,
+                    repeat: true,
+                  ),
+                  AnimatedButton(
+                    onPressed: () {
+                      context.read<DetailRestaurantCubit>().getDetailRestaurant(
+                            widget.restaurant.id!,
+                          );
+                    },
+                    color: blueColor,
+                    width: 200,
+                    height: 50,
+                    child: Text(
+                      'Refresh',
+                      style: whiteTextStyle,
+                    ),
+                  ),
+                ],
               ),
             ),
           );
