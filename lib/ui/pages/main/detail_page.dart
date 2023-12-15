@@ -164,35 +164,36 @@ class _DetailPageState extends State<DetailPage> {
     return BlocBuilder<DetailRestaurantCubit, DetailRestaurantState>(
       builder: (context, state) {
         if (state is DetailRestaurantFailed) {
-          return RefreshIndicator(
-            onRefresh: () async {
-              context.read<DetailRestaurantCubit>().getDetailRestaurant(
-                    widget.restaurant.id!,
-                  );
-            },
-            child: Center(
-              child: Column(
-                children: [
-                  Lottie.asset(
-                    'assets/lottie_no_internet.json',
-                    fit: BoxFit.cover,
-                    repeat: true,
-                  ),
-                  AnimatedButton(
-                    onPressed: () {
-                      context.read<DetailRestaurantCubit>().getDetailRestaurant(
-                            widget.restaurant.id!,
-                          );
-                    },
-                    color: blueColor,
-                    width: 200,
-                    height: 50,
-                    child: Text(
-                      'Refresh',
-                      style: whiteTextStyle,
+          return Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Lottie.asset(
+                      'assets/lottie_no_internet.json',
+                      fit: BoxFit.cover,
+                      repeat: true,
                     ),
-                  ),
-                ],
+                    AnimatedButton(
+                      onPressed: () {
+                        context
+                            .read<DetailRestaurantCubit>()
+                            .getDetailRestaurant(
+                              widget.restaurant.id!,
+                            );
+                      },
+                      color: blueColor,
+                      width: 200,
+                      height: 50,
+                      child: Text(
+                        'Refresh',
+                        style: whiteTextStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
