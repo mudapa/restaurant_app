@@ -35,12 +35,7 @@ class _FavoritePageState extends State<FavoritePage> {
         ),
       ),
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            context.read<FavoriteCubit>().loadFavoriteRestaurants();
-          },
-          child: _buildFavoriteList(),
-        ),
+        child: _buildFavoriteList(),
       ),
     );
   }

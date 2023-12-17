@@ -67,12 +67,19 @@ class _RestaurantItemState extends State<RestaurantItem> {
                 ),
                 child: Stack(
                   children: [
-                    Image.network(
-                      '${ApiPath.imageMediumUrl}${widget.restaurant.pictureId!}',
-                      width: MediaQuery.of(context).size.width / 2 - 24,
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
+                    widget.restaurant.pictureId != null
+                        ? Image.network(
+                            '${ApiPath.imageMediumUrl}${widget.restaurant.pictureId!}',
+                            width: MediaQuery.of(context).size.width / 2 - 24,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            'assets/empty_image.jpg',
+                            width: MediaQuery.of(context).size.width / 2 - 24,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          ),
                     Container(
                       height: 150,
                       width: MediaQuery.of(context).size.width / 2 - 24,

@@ -31,7 +31,8 @@ class FavoriteService {
 
   Future<List<Restaurant>> loadFavoriteRestaurants() async {
     final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
+
+    final keys = prefs.getKeys().where((key) => key != 'isNotif').toList();
 
     final List<Restaurant> favorites = [];
 

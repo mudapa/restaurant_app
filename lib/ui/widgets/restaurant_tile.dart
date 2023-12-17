@@ -58,11 +58,17 @@ class _RestaurantTileState extends State<RestaurantTile> {
         },
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: Image.network(
-            '${ApiPath.imageSmallUrl}${widget.restaurant.pictureId!}',
-            width: 100,
-            fit: BoxFit.cover,
-          ),
+          child: widget.restaurant.pictureId != null
+              ? Image.network(
+                  '${ApiPath.imageSmallUrl}${widget.restaurant.pictureId!}',
+                  width: 100,
+                  fit: BoxFit.cover,
+                )
+              : Image.asset(
+                  'assets/empty_image.jpg',
+                  width: 100,
+                  fit: BoxFit.cover,
+                ),
         ),
         title: Text(
           widget.restaurant.name!,

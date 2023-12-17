@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../cubit/notification/notification_cubit.dart';
 import '../../../shared/helper.dart';
 import '../../../shared/style.dart';
 
@@ -24,16 +26,24 @@ class _SettingPageState extends State<SettingPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Theme',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: blackTextStyle.copyWith(
+                fontSize: 20,
+                fontWeight: bold,
+              ),
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Dark Mode'),
-                Switch(
+                Text(
+                  'Dark Mode',
+                  style: blackTextStyle.copyWith(
+                    fontWeight: semiBold,
+                  ),
+                ),
+                Switch.adaptive(
                   value: isDarkMode,
                   onChanged: (value) {
                     setState(() {
@@ -51,6 +61,66 @@ class _SettingPageState extends State<SettingPage> {
                         orangeColor,
                       );
                     }
+                  },
+                ),
+              ],
+            ),
+            const Divider(),
+            const SizedBox(height: 16),
+            Text(
+              'Notification',
+              style: blackTextStyle.copyWith(
+                fontSize: 20,
+                fontWeight: bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Restaurant Notification',
+                      style: blackTextStyle.copyWith(
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                    Text(
+                      'Enable notification',
+                      style: greyTextStyle.copyWith(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                BlocConsumer<NotificationCubit, NotificationState>(
+                  listener: (context, state) {
+                    if (state is NotificationActive) {
+                      toast(
+                        state.isNotificationActive
+                            ? 'Notification is On'
+                            : 'Notification is Off',
+                        state.isNotificationActive ? greenColor : redColor,
+                      );
+                    }
+
+                    if (state is NotificationFailed) {
+                      toast(state.error, redColor);
+                    }
+                  },
+                  builder: (context, state) {
+                    return Switch.adaptive(
+                      value: state is NotificationActive
+                          ? state.isNotificationActive
+                          : false,
+                      onChanged: (value) {
+                        context
+                            .read<NotificationCubit>()
+                            .toggleNotification(value);
+                      },
+                    );
                   },
                 ),
               ],

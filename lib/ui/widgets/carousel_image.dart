@@ -30,12 +30,17 @@ class CarouselImage extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          image: DecorationImage(
-            image: NetworkImage(
-              '${ApiPath.imageLargeUrl}${restaurant.pictureId!}',
-            ),
-            fit: BoxFit.cover,
-          ),
+          image: restaurant.pictureId != null
+              ? DecorationImage(
+                  image: NetworkImage(
+                    '${ApiPath.imageLargeUrl}${restaurant.pictureId!}',
+                  ),
+                  fit: BoxFit.cover,
+                )
+              : const DecorationImage(
+                  image: AssetImage('assets/empty_image.jpg'),
+                  fit: BoxFit.cover,
+                ),
           boxShadow: [
             BoxShadow(
               color: greyColor.withOpacity(0.5),
