@@ -108,6 +108,7 @@ class _RestaurantItemState extends State<RestaurantItem> {
                               ),
                             ),
                             child: IconButton(
+                              key: const Key('favorite_button'),
                               icon: Icon(
                                 isFavorite
                                     ? Icons.favorite

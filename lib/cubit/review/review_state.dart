@@ -12,7 +12,7 @@ final class ReviewInitial extends ReviewState {}
 final class ReviewLoading extends ReviewState {}
 
 final class ReviewSuccess extends ReviewState {
-  final CustomerReview reviewModel;
+  final ReviewModel reviewModel;
 
   const ReviewSuccess({
     required this.reviewModel,

@@ -54,6 +54,7 @@ class _MainPageState extends State<MainPage> {
                 modalBottom();
               },
               child: Icon(
+                key: const Key('search_icon'),
                 Icons.search,
                 color: whiteColor,
               ),
@@ -61,6 +62,7 @@ class _MainPageState extends State<MainPage> {
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomNavigationBar(
+        key: const Key('bottom_nav_bar'),
         currentIndex: _bottomNavIndex,
         items: _bottomNavBarItems,
         onTap: (selected) {

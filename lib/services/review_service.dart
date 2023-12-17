@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../shared/api_path.dart';
 
 class ReviewService {
-  Future<CustomerReview> createReviews({
+  Future<ReviewModel> createReviews({
     required String id,
     required String name,
     required String review,
@@ -25,7 +25,7 @@ class ReviewService {
       );
 
       if (response.statusCode == 201) {
-        return CustomerReview.fromJson(json.decode(response.body));
+        return ReviewModel.fromJson(json.decode(response.body));
       } else {
         throw Exception('Failed to create data');
       }
