@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'style.dart';
 
 void toast(String message, Color color) {

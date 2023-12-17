@@ -7,14 +7,9 @@ import '../../cubit/find/find_restaurant_cubit.dart';
 import '../../shared/style.dart';
 import 'restaurant_tile.dart';
 
-class FindRestaurantModal extends StatefulWidget {
+class FindRestaurantModal extends StatelessWidget {
   const FindRestaurantModal({super.key});
 
-  @override
-  State<FindRestaurantModal> createState() => _FindRestaurantModalState();
-}
-
-class _FindRestaurantModalState extends State<FindRestaurantModal> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(

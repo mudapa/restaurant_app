@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../shared/style.dart';
 import '../../widgets/find_restaurant_modal.dart';
+import 'favorite_page.dart';
 import 'home_page.dart';
 import 'setting_page.dart';
 
@@ -17,12 +18,17 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _listWidget = const [
     HomePage(),
+    FavoritePage(),
     SettingPage(),
   ];
   final List<BottomNavigationBarItem> _bottomNavBarItems = const [
     BottomNavigationBarItem(
       icon: Icon(Icons.home_filled),
       label: "Home",
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.favorite),
+      label: "Favorite",
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.settings),
@@ -41,17 +47,19 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _listWidget[_bottomNavIndex],
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Search',
-        onPressed: () {
-          modalBottom();
-        },
-        child: Icon(
-          Icons.search,
-          color: whiteColor,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: _bottomNavIndex != 1 && _bottomNavIndex != 2
+          ? FloatingActionButton(
+              tooltip: 'Search',
+              onPressed: () {
+                modalBottom();
+              },
+              child: Icon(
+                Icons.search,
+                color: whiteColor,
+              ),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _bottomNavIndex,
         items: _bottomNavBarItems,

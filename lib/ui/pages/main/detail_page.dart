@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../../cubit/detail/detail_restaurant_cubit.dart';
+import '../../../cubit/favorite/favorite_cubit.dart';
 import '../../../models/restaurant_model.dart';
 import '../../../shared/api_path.dart';
 import '../../../shared/helper.dart';
@@ -33,7 +34,17 @@ class _DetailPageState extends State<DetailPage> {
     context.read<DetailRestaurantCubit>().getDetailRestaurant(
           widget.restaurant.id!,
         );
+    _checkFavoriteStatus();
     super.initState();
+  }
+
+  Future<void> _checkFavoriteStatus() async {
+    final isFavorite = await context
+        .read<FavoriteCubit>()
+        .loadFavoriteStatus(widget.restaurant);
+    setState(() {
+      this.isFavorite = isFavorite;
+    });
   }
 
   @override
@@ -110,27 +121,42 @@ class _DetailPageState extends State<DetailPage> {
             overflow: TextOverflow.ellipsis,
           ),
           const Spacer(),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                isFavorite = !isFavorite;
+          BlocConsumer<FavoriteCubit, FavoriteState>(
+            listener: (context, state) {
+              if (state is FavoriteSuccess) {
+                setState(() {
+                  isFavorite = state.favoriteRestaurants
+                      .any((element) => element.id == widget.restaurant.id);
+                });
+              }
+
+              if (state is FavoriteFailed) {
                 toast(
-                  'Feature Coming Soon!',
-                  orangeColor,
+                  state.error,
+                  redColor,
                 );
-              });
+              }
             },
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: lightGreyColor.withOpacity(0.3),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? redColor : whiteColor,
-              ),
-            ),
+            builder: (context, state) {
+              return GestureDetector(
+                onTap: () {
+                  context
+                      .read<FavoriteCubit>()
+                      .toggleFavorite(widget.restaurant);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: lightGreyColor.withOpacity(0.3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border_rounded,
+                    color: isFavorite ? redColor : whiteColor,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
