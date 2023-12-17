@@ -16,7 +16,7 @@ class FindRestaurantModal extends StatelessWidget {
       height: MediaQuery.of(context).size.height / 2,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: 24,
+          horizontal: 16,
         ),
         child: RefreshIndicator(
           onRefresh: () async {

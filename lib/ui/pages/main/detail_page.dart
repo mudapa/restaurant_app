@@ -92,6 +92,7 @@ class _DetailPageState extends State<DetailPage> {
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
+              context.read<FavoriteCubit>().loadFavoriteRestaurants();
             },
             child: Container(
               padding: const EdgeInsets.all(8),
@@ -138,22 +139,46 @@ class _DetailPageState extends State<DetailPage> {
               }
             },
             builder: (context, state) {
-              return GestureDetector(
-                onTap: () {
-                  context
-                      .read<FavoriteCubit>()
-                      .toggleFavorite(widget.restaurant);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: lightGreyColor.withOpacity(0.3),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
+              return Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: lightGreyColor.withOpacity(0.3),
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border_rounded,
                     color: isFavorite ? redColor : whiteColor,
                   ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(
+                          isFavorite
+                              ? 'Remove from favorite?'
+                              : 'Add to favorite?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              context
+                                  .read<FavoriteCubit>()
+                                  .toggleFavorite(widget.restaurant);
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Yes'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               );
             },

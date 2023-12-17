@@ -4,7 +4,7 @@ import 'package:lottie/lottie.dart';
 
 import '../../../cubit/favorite/favorite_cubit.dart';
 import '../../../shared/style.dart';
-import '../../widgets/favorite_restaurant_tile.dart';
+import '../../widgets/restaurant_tile.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -24,9 +24,24 @@ class _FavoritePageState extends State<FavoritePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Favorite Restaurants'),
+        title: const Row(
+          children: [
+            Text('Your Favorite Restaurants'),
+            SizedBox(width: 8),
+            Icon(
+              Icons.favorite,
+            )
+          ],
+        ),
       ),
-      body: _buildFavoriteList(),
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            context.read<FavoriteCubit>().loadFavoriteRestaurants();
+          },
+          child: _buildFavoriteList(),
+        ),
+      ),
     );
   }
 
@@ -39,6 +54,15 @@ class _FavoritePageState extends State<FavoritePage> {
               'assets/lottie_find.json',
               fit: BoxFit.cover,
               repeat: true,
+            ),
+          );
+        }
+
+        if (state is FavoriteFailed) {
+          return Center(
+            child: Text(
+              state.error,
+              style: blackTextStyle,
             ),
           );
         }
@@ -58,7 +82,7 @@ class _FavoritePageState extends State<FavoritePage> {
           return ListView(
             children: favorites
                 .map(
-                  (restaurant) => FavoriteRestaurantTile(
+                  (restaurant) => RestaurantTile(
                     restaurant: restaurant,
                   ),
                 )
