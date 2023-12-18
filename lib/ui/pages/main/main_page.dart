@@ -23,15 +23,24 @@ class _MainPageState extends State<MainPage> {
   ];
   final List<BottomNavigationBarItem> _bottomNavBarItems = const [
     BottomNavigationBarItem(
-      icon: Icon(Icons.home_filled),
+      icon: Icon(
+        key: Key('home_page_bottom_nav_item'),
+        Icons.home_filled,
+      ),
       label: "Home",
     ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.favorite),
+      icon: Icon(
+        key: Key('favorite_page_bottom_nav_item'),
+        Icons.favorite,
+      ),
       label: "Favorite",
     ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.settings),
+      icon: Icon(
+        key: Key('setting_page_bottom_nav_item'),
+        Icons.settings,
+      ),
       label: "Setting",
     ),
   ];
