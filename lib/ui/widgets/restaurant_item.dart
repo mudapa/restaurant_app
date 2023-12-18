@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubit/favorite/favorite_cubit.dart';
 import '../../models/restaurant_model.dart';
 import '../../shared/api_path.dart';
+import '../../shared/navigation.dart';
 import '../../shared/style.dart';
-import '../pages/main/detail_page.dart';
 
 class RestaurantItem extends StatefulWidget {
   final Restaurant restaurant;
@@ -31,14 +31,7 @@ class _RestaurantItemState extends State<RestaurantItem> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DetailPage(
-              restaurant: widget.restaurant,
-            ),
-          ),
-        );
+        Navigation.intentWithData('/detail_restaurant', widget.restaurant);
       },
       child: Container(
         width: MediaQuery.of(context).size.width / 2 - 24,

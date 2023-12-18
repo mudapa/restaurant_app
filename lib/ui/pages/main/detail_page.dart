@@ -9,6 +9,7 @@ import '../../../cubit/favorite/favorite_cubit.dart';
 import '../../../models/restaurant_model.dart';
 import '../../../shared/api_path.dart';
 import '../../../shared/helper.dart';
+import '../../../shared/navigation.dart';
 import '../../../shared/style.dart';
 import '../../widgets/card_customer_review.dart';
 import '../../widgets/custom_button.dart';
@@ -91,7 +92,7 @@ class _DetailPageState extends State<DetailPage> {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.pop(context);
+              Navigation.back();
               context.read<FavoriteCubit>().loadFavoriteRestaurants();
             },
             child: Container(

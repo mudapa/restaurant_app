@@ -5,6 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../models/list_restaurant.dart';
+import '../models/restaurant_model.dart';
 import 'navigation.dart';
 
 final selectNotificationSubject = BehaviorSubject<String>();
@@ -69,9 +70,8 @@ class NotificationHelper {
   void configureSelectNotificationSubject(String route) {
     selectNotificationSubject.stream.listen(
       (String payload) async {
-        var data = ListRestaurant.fromJson(json.decode(payload));
-        var restaurant = data;
-        Navigation.intentWithData(route, restaurant);
+        var data = Restaurant.fromJson(json.decode(payload));
+        Navigation.intentWithData(route, data);
       },
     );
   }

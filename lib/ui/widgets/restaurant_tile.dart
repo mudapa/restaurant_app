@@ -5,8 +5,8 @@ import '../../cubit/favorite/favorite_cubit.dart';
 import '../../models/restaurant_model.dart';
 import '../../shared/api_path.dart';
 import '../../shared/helper.dart';
+import '../../shared/navigation.dart';
 import '../../shared/style.dart';
-import '../pages/main/detail_page.dart';
 
 class RestaurantTile extends StatefulWidget {
   final Restaurant restaurant;
@@ -47,14 +47,7 @@ class _RestaurantTileState extends State<RestaurantTile> {
       ),
       child: ListTile(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetailPage(
-                restaurant: widget.restaurant,
-              ),
-            ),
-          );
+          Navigation.intentWithData('/detail_restaurant', widget.restaurant);
         },
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),

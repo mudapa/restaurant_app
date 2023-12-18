@@ -14,6 +14,7 @@ import 'cubit/restaurant/restaurant_cubit.dart';
 import 'cubit/review/review_cubit.dart';
 import 'routes/routes.dart';
 import 'services/background_service.dart';
+import 'shared/navigation.dart';
 import 'shared/notification_helper.dart';
 import 'shared/style.dart';
 
@@ -81,6 +82,7 @@ class MyApp extends StatelessWidget {
             shape: const CircleBorder(),
           ),
         ),
+        navigatorKey: navigatorKey,
         routes: AppRoutes.routes,
       ),
     );

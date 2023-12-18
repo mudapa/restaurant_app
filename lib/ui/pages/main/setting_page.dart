@@ -14,6 +14,21 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
   bool isDarkMode = false;
+  bool isNotificationActive = false;
+
+  @override
+  void initState() {
+    _checkNotifStatus();
+    super.initState();
+  }
+
+  Future<void> _checkNotifStatus() async {
+    final isNotificationActive =
+        await context.read<NotificationCubit>().loadNotificationStatus();
+    setState(() {
+      this.isNotificationActive = isNotificationActive;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,12 +113,9 @@ class _SettingPageState extends State<SettingPage> {
                 BlocConsumer<NotificationCubit, NotificationState>(
                   listener: (context, state) {
                     if (state is NotificationActive) {
-                      toast(
-                        state.isNotificationActive
-                            ? 'Notification is On'
-                            : 'Notification is Off',
-                        state.isNotificationActive ? greenColor : redColor,
-                      );
+                      setState(() {
+                        isNotificationActive = state.isNotificationActive;
+                      });
                     }
 
                     if (state is NotificationFailed) {
@@ -112,9 +124,7 @@ class _SettingPageState extends State<SettingPage> {
                   },
                   builder: (context, state) {
                     return Switch.adaptive(
-                      value: state is NotificationActive
-                          ? state.isNotificationActive
-                          : false,
+                      value: isNotificationActive,
                       onChanged: (value) {
                         context
                             .read<NotificationCubit>()

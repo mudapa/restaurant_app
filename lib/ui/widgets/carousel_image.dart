@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../models/restaurant_model.dart';
 import '../../shared/api_path.dart';
+import '../../shared/navigation.dart';
 import '../../shared/style.dart';
-import '../pages/main/detail_page.dart';
 
 class CarouselImage extends StatelessWidget {
   final Restaurant restaurant;
@@ -16,14 +16,7 @@ class CarouselImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DetailPage(
-              restaurant: restaurant,
-            ),
-          ),
-        );
+        Navigation.intentWithData('/detail_restaurant', restaurant);
       },
       child: Container(
         width: MediaQuery.of(context).size.width,

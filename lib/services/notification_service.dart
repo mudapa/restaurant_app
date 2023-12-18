@@ -17,14 +17,14 @@ class NotificationService {
     if (value) {
       return await AndroidAlarmManager.periodic(
         const Duration(days: 1),
-        1,
+        0,
         BackgroundService.callback,
         startAt: DateTimeHelper.format(),
         exact: true,
         wakeup: true,
       );
     } else {
-      await AndroidAlarmManager.cancel(1);
+      await AndroidAlarmManager.cancel(0);
       return false;
     }
   }

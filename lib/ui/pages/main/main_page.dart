@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../shared/notification_helper.dart';
 import '../../../shared/style.dart';
 import '../../widgets/find_restaurant_modal.dart';
 import 'favorite_page.dart';
@@ -14,6 +15,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final NotificationHelper _notificationHelper = NotificationHelper();
   int _bottomNavIndex = 0;
 
   final List<Widget> _listWidget = const [
@@ -50,6 +52,19 @@ class _MainPageState extends State<MainPage> {
       context: context,
       builder: (context) => const FindRestaurantModal(),
     );
+  }
+
+  @override
+  void initState() {
+    _notificationHelper
+        .configureSelectNotificationSubject('/detail_restaurant');
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    selectNotificationSubject.close();
+    super.dispose();
   }
 
   @override
