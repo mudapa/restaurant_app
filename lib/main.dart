@@ -6,12 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'cubit/detail/detail_restaurant_cubit.dart';
-import 'cubit/favorite/favorite_cubit.dart';
-import 'cubit/find/find_restaurant_cubit.dart';
-import 'cubit/notification/notification_cubit.dart';
-import 'cubit/restaurant/restaurant_cubit.dart';
-import 'cubit/review/review_cubit.dart';
+import 'routes/list_bloc_providers.dart';
 import 'routes/routes.dart';
 import 'services/background_service.dart';
 import 'shared/navigation.dart';
@@ -46,26 +41,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => RestaurantCubit(),
-        ),
-        BlocProvider(
-          create: (context) => FindRestaurantCubit(),
-        ),
-        BlocProvider(
-          create: (context) => DetailRestaurantCubit(),
-        ),
-        BlocProvider(
-          create: (context) => ReviewCubit(),
-        ),
-        BlocProvider(
-          create: (context) => FavoriteCubit(),
-        ),
-        BlocProvider(
-          create: (context) => NotificationCubit(),
-        ),
-      ],
+      providers: ListBlocProviders.providers,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Restaurant App',
