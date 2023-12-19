@@ -86,7 +86,6 @@ class _MainPageState extends State<MainPage> {
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomNavigationBar(
-        key: const Key('bottom_nav_bar'),
         currentIndex: _bottomNavIndex,
         items: _bottomNavBarItems,
         onTap: (selected) {

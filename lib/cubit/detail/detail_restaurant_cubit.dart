@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:http/http.dart' as http;
 
 import '../../models/detail_restauraunt_model.dart';
 import '../../services/restaurant_service.dart';
@@ -13,7 +14,7 @@ class DetailRestaurantCubit extends Cubit<DetailRestaurantState> {
     try {
       emit(DetailRestaurantLoading());
       final detailRestaurant =
-          await RestaurantService().getDetailRestaurant(id);
+          await RestaurantService().getDetailRestaurant(id, http.Client());
       emit(DetailRestaurantSuccess(detailRestaurant));
     } on Exception catch (e) {
       emit(DetailRestaurantFailed(e.toString()));

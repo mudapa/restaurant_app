@@ -7,9 +7,9 @@ import '../models/list_restaurant.dart';
 import '../shared/api_path.dart';
 
 class RestaurantService {
-  Future<ListRestaurant> getListRestaurants() async {
+  Future<ListRestaurant> getListRestaurants(http.Client client) async {
     try {
-      final response = await http.get(
+      final response = await client.get(
         Uri.parse('${ApiPath.baseUrl}/list'),
       );
 
@@ -23,9 +23,10 @@ class RestaurantService {
     }
   }
 
-  Future<FindRestaurant> getSearchRestaurants(String query) async {
+  Future<FindRestaurant> getSearchRestaurants(
+      String query, http.Client client) async {
     try {
-      final response = await http.get(
+      final response = await client.get(
         Uri.parse('${ApiPath.baseUrl}/search?q=$query'),
       );
 
@@ -39,9 +40,10 @@ class RestaurantService {
     }
   }
 
-  Future<DetailRestaurantModel> getDetailRestaurant(String id) async {
+  Future<DetailRestaurantModel> getDetailRestaurant(
+      String id, http.Client client) async {
     try {
-      final response = await http.get(
+      final response = await client.get(
         Uri.parse('${ApiPath.baseUrl}/detail/$id'),
       );
 

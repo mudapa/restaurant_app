@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:http/http.dart' as http;
 
 import '../../models/review_model.dart';
 import '../../services/review_service.dart';
@@ -20,6 +21,7 @@ class ReviewCubit extends Cubit<ReviewState> {
         id: id,
         name: name,
         review: review,
+        client: http.Client(),
       );
 
       emit(ReviewSuccess(reviewModel: reviewModel));

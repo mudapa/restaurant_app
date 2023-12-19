@@ -10,6 +10,7 @@ class ReviewService {
     required String id,
     required String name,
     required String review,
+    http.Client? client,
   }) async {
     try {
       var headers = {'Content-Type': 'application/json'};
@@ -18,7 +19,7 @@ class ReviewService {
         'name': name,
         'review': review,
       });
-      final response = await http.post(
+      final response = await client!.post(
         Uri.parse('${ApiPath.baseUrl}/review'),
         headers: headers,
         body: body,
